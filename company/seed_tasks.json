@@ -1,0 +1,53 @@
+{
+  "project": "autonomous-company-mvp",
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "MVP scope and milestone plan",
+      "stage": "IDEA",
+      "owner_id": 1,
+      "depends_on": [],
+      "status": "OPEN"
+    },
+    {
+      "id": "T2",
+      "title": "Dashboard interaction wireframe",
+      "stage": "DESIGN",
+      "owner_id": 2,
+      "depends_on": ["T1"],
+      "status": "OPEN"
+    },
+    {
+      "id": "T3",
+      "title": "Presence + tasks API implementation",
+      "stage": "BUILD",
+      "owner_id": 3,
+      "depends_on": ["T1"],
+      "status": "OPEN"
+    },
+    {
+      "id": "T4",
+      "title": "Dashboard UI with realtime updates",
+      "stage": "BUILD",
+      "owner_id": 4,
+      "depends_on": ["T2", "T3"],
+      "status": "OPEN"
+    },
+    {
+      "id": "T5",
+      "title": "Regression matrix and end-to-end checks",
+      "stage": "REVIEW",
+      "owner_id": 5,
+      "depends_on": ["T4"],
+      "status": "OPEN"
+    },
+    {
+      "id": "T6",
+      "title": "Release pipeline and monitoring baseline",
+      "stage": "RELEASE",
+      "owner_id": 6,
+      "depends_on": ["T5"],
+      "status": "OPEN"
+    }
+  ]
+}
