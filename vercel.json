@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" }
+  "routes": [
+    { "src": "^/api/(.*)$", "dest": "/api/$1" },
+    { "src": "^/dashboard$", "dest": "/dashboard.html" },
+    { "src": "^/$", "dest": "/index.html" },
+    { "handle": "filesystem" },
+    { "src": "^(.*)$", "dest": "/index.html" }
   ]
 }

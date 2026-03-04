@@ -353,3 +353,18 @@ cat .vercel/project.json
 - 我负责改代码 + 提交 PR
 - 你合并到 `main`
 - GitHub Actions 自动发布到线上
+
+### 404 排查（Vercel）
+
+如果线上仍显示 `404: NOT_FOUND`，按下面 3 项检查：
+
+1. Vercel Project 的 **Root Directory** 必须是仓库根目录（不是子目录）。
+2. 确认最新部署包含本次 `vercel.json` 路由配置。
+3. 打开 `Project -> Deployments`，选择最新一次并执行 **Redeploy**。
+
+当前路由策略已做兜底：
+
+- `/` -> `index.html`
+- `/dashboard` -> `dashboard.html`
+- `/api/*` -> 对应 serverless API
+- 其他路径 -> 回退到 `index.html`
