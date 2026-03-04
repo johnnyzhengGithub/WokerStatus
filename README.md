@@ -245,4 +245,62 @@ npm start
 
 > 每次改需求时，可以在这里勾选/补充条目，方便跟踪进度。
 
-"# WokerStatus" 
+"# WokerStatus"
+
+## 进一步设计（自治 AI 公司）
+
+如果你要把本项目升级为“6 个 AI 员工可自主找灵感、处理问题、产出产品”的自治公司模型，请参考：
+
+- `docs/AI_AUTONOMOUS_COMPANY_DESIGN.md`
+
+## 可运行原型：6 个 AI 员工公司（本地模拟）
+
+仓库现在提供了一个可运行的自治公司模拟器（无需额外依赖）：
+
+- 员工编制：`company/roster.json`
+- 流程规则：`company/workflow.json`
+- 初始任务：`company/seed_tasks.json`
+- 运行脚本：`scripts/company_simulator.py`
+
+### 快速开始
+
+```bash
+python scripts/company_simulator.py init --force
+python scripts/company_simulator.py refresh
+python scripts/company_simulator.py status
+```
+
+你可以按任务逐个推进，观察 6 个员工状态变化（WORKING / WAITING / IDLE）：
+
+```bash
+python scripts/company_simulator.py complete T1
+python scripts/company_simulator.py status
+```
+
+## Vercel 部署（可直接出成品）
+
+这个仓库已经包含可部署的前端页面和 API：
+
+- 页面：`/`、`/dashboard.html`
+- API：`/api/dashboard`、`/api/presence/update`、`/api/tasks`
+
+### 本地预览成品
+
+```bash
+node server.js
+```
+
+打开 `http://localhost:3000/dashboard.html`。
+
+### 发布到 Vercel
+
+```bash
+npm i -g vercel
+vercel
+vercel --prod
+```
+
+部署完成后，你会得到一个线上 URL（例如 `https://xxx.vercel.app`），可直接访问：
+
+- `https://xxx.vercel.app/`
+- `https://xxx.vercel.app/dashboard.html`

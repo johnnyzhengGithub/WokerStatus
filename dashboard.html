@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkersStatus Dashboard</title>
+  <style>
+    body{margin:0;font-family:Inter,system-ui;background:#080b12;color:#e8ebff}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .box,.card{background:#111626;border:1px solid #2a3358;border-radius:14px;padding:14px}
+    .wall{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .tag{font-size:12px;padding:4px 8px;border-radius:999px;background:#263056}
+    .WAITING{background:#6a4b18}.WORKING{background:#1d5c3f}.IDLE{background:#2b334e}.BLOCKED{background:#7f2430}
+    form{margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+    input,select,button{padding:10px;border-radius:8px;border:1px solid #2a3358;background:#0d1322;color:#fff}
+    button{background:linear-gradient(90deg,#5cf,#96f);color:#041220;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Dashboard</h1>
+    <div class="kpi" id="kpi"></div>
+    <div class="wall" id="wall"></div>
+
+    <div class="box">
+      <h3>手动更新员工状态</h3>
+      <form id="presenceForm">
+        <select name="user_id"><option value="1">Orion</option><option value="2">Muse</option><option value="3">Atlas</option><option value="4">Nova</option><option value="5">Echo</option><option value="6">Forge</option></select>
+        <select name="state"><option>WORKING</option><option>WAITING</option><option>BLOCKED</option><option>IDLE</option></select>
+        <input name="task_title" placeholder="task title"/>
+        <input name="waiting_for_user_id" placeholder="waiting for user id"/>
+        <input name="reason" placeholder="reason"/>
+        <button type="submit">Update</button>
+      </form>
+    </div>
+  </div>
+<script>
+async function load(){
+  const data=await (await fetch('/api/dashboard')).json();
+  const s=data.summary;
+  document.getElementById('kpi').innerHTML=[
+    ['Working',s.working],['Waiting',s.waiting],['Blocked',s.blocked],['Idle',s.idle],['Longest Waiting',`${s.longest_waiting_user||'-'} ${s.longest_waiting_minutes||0}m`]
+  ].map(([k,v])=>`<div class='box'><div>${k}</div><strong>${v}</strong></div>`).join('');
+  document.getElementById('wall').innerHTML=data.presence.map((it)=>`<div class='card'>
+    <h3>${it.user.name} <small>${it.user.role}</small></h3>
+    <span class='tag ${it.presence.state}'>${it.presence.state}</span>
+    <p>任务：${it.presence.task_title||'-'}</p>
+    <p>等待：${it.presence.waiting_for_user_id||'-'}</p>
+    <p>原因：${it.presence.reason||'-'}</p>
+  </div>`).join('');
+}
+
+document.getElementById('presenceForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const f=new FormData(e.target);
+  const body=Object.fromEntries(f.entries());
+  if(body.waiting_for_user_id) body.waiting_for_user_id=Number(body.waiting_for_user_id);
+  body.user_id=Number(body.user_id);
+  const r=await fetch('/api/presence/update',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json();
+  if(!r.ok) alert(j.error||'update failed');
+  await load();
+});
+load();
+</script>
+</body>
+</html>
