@@ -39,7 +39,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const file = url === '/' ? '/index.html' : url;
+  const file = url === '/' ? '/index.html' : (url === '/dashboard' ? '/dashboard.html' : url);
   const filePath = join(process.cwd(), file);
   if (!existsSync(filePath)) {
     res.statusCode = 404;

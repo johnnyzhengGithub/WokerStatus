@@ -290,7 +290,7 @@ python scripts/company_simulator.py status
 node server.js
 ```
 
-打开 `http://localhost:3000/dashboard.html`。
+打开 `http://localhost:3000/dashboard.html`（或 `http://localhost:3000/dashboard`）。
 
 ### 发布到 Vercel
 
@@ -303,4 +303,5 @@ vercel --prod
 部署完成后，你会得到一个线上 URL（例如 `https://xxx.vercel.app`），可直接访问：
 
 - `https://xxx.vercel.app/`
+- `https://xxx.vercel.app/dashboard`（等价于 `/dashboard.html`）
 - `https://xxx.vercel.app/dashboard.html`
