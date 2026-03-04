@@ -294,6 +294,9 @@ node server.js
 
 ### 发布到 Vercel
 
+> 重要：Vercel 生产环境默认跟踪 `main` 分支。
+> 所有可上线变更必须进入 `main`（不是只在 `work`/其它分支）。
+
 ```bash
 npm i -g vercel
 vercel
