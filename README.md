@@ -305,3 +305,51 @@ vercel --prod
 - `https://xxx.vercel.app/`
 - `https://xxx.vercel.app/dashboard`（等价于 `/dashboard.html`）
 - `https://xxx.vercel.app/dashboard.html`
+
+## 最简 GitHub 自动化发布（push main 自动触发 Vercel）
+
+你后续只要提需求，我改完代码后合并到 `main` 就会自动发布。
+
+### 1) 一次性准备（只做一次）
+
+在本地登录 Vercel 并拿到项目信息：
+
+```bash
+vercel login
+vercel link
+cat .vercel/project.json
+```
+
+记下：
+
+- `orgId` -> `VERCEL_ORG_ID`
+- `projectId` -> `VERCEL_PROJECT_ID`
+
+再创建 Token：
+
+- Vercel Dashboard -> Settings -> Tokens -> 创建 token（记为 `VERCEL_TOKEN`）
+
+### 2) 配置 GitHub Secrets
+
+在 GitHub 仓库 -> Settings -> Secrets and variables -> Actions，新增：
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+### 3) 自动部署工作流
+
+仓库已提供：
+
+- `.github/workflows/deploy-vercel.yml`
+
+触发规则：
+
+- `push` 到 `main` 自动部署到 Vercel production
+- 支持手动触发（workflow_dispatch）
+
+### 4) 日常使用（之后你只要提需求）
+
+- 我负责改代码 + 提交 PR
+- 你合并到 `main`
+- GitHub Actions 自动发布到线上
