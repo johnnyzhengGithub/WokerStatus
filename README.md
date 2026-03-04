@@ -276,3 +276,98 @@ python scripts/company_simulator.py status
 python scripts/company_simulator.py complete T1
 python scripts/company_simulator.py status
 ```
+
+## Vercel 部署（可直接出成品）
+
+这个仓库已经包含可部署的前端页面和 API：
+
+- 页面：`/`、`/dashboard.html`
+- API：`/api/dashboard`、`/api/presence/update`、`/api/tasks`
+
+### 本地预览成品
+
+```bash
+node server.js
+```
+
+打开 `http://localhost:3000/dashboard.html`（或 `http://localhost:3000/dashboard`）。
+
+### 发布到 Vercel
+
+> 重要：Vercel 生产环境默认跟踪 `main` 分支。
+> 所有可上线变更必须进入 `main`（不是只在 `work`/其它分支）。
+
+```bash
+npm i -g vercel
+vercel
+vercel --prod
+```
+
+部署完成后，你会得到一个线上 URL（例如 `https://xxx.vercel.app`），可直接访问：
+
+- `https://xxx.vercel.app/`
+- `https://xxx.vercel.app/dashboard`（等价于 `/dashboard.html`）
+- `https://xxx.vercel.app/dashboard.html`
+
+## 最简 GitHub 自动化发布（push main 自动触发 Vercel）
+
+你后续只要提需求，我改完代码后合并到 `main` 就会自动发布。
+
+### 1) 一次性准备（只做一次）
+
+在本地登录 Vercel 并拿到项目信息：
+
+```bash
+vercel login
+vercel link
+cat .vercel/project.json
+```
+
+记下：
+
+- `orgId` -> `VERCEL_ORG_ID`
+- `projectId` -> `VERCEL_PROJECT_ID`
+
+再创建 Token：
+
+- Vercel Dashboard -> Settings -> Tokens -> 创建 token（记为 `VERCEL_TOKEN`）
+
+### 2) 配置 GitHub Secrets
+
+在 GitHub 仓库 -> Settings -> Secrets and variables -> Actions，新增：
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+### 3) 自动部署工作流
+
+仓库已提供：
+
+- `.github/workflows/deploy-vercel.yml`
+
+触发规则：
+
+- `push` 到 `main` 自动部署到 Vercel production
+- 支持手动触发（workflow_dispatch）
+
+### 4) 日常使用（之后你只要提需求）
+
+- 我负责改代码 + 提交 PR
+- 你合并到 `main`
+- GitHub Actions 自动发布到线上
+
+### 404 排查（Vercel）
+
+如果线上仍显示 `404: NOT_FOUND`，按下面 3 项检查：
+
+1. Vercel Project 的 **Root Directory** 必须是仓库根目录（不是子目录）。
+2. 确认最新部署包含本次 `vercel.json` 路由配置。
+3. 打开 `Project -> Deployments`，选择最新一次并执行 **Redeploy**。
+
+当前路由策略已做兜底：
+
+- `/` -> `index.html`
+- `/dashboard` -> `dashboard.html`
+- `/api/*` -> 对应 serverless API
+- 其他路径 -> 回退到 `index.html`
