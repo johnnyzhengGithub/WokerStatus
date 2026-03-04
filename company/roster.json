@@ -1,0 +1,47 @@
+{
+  "company_name": "WorkersStatus Autonomous Company",
+  "employees": [
+    {
+      "id": 1,
+      "name": "Orion",
+      "role": "PM",
+      "mission": "Define goals, prioritize opportunities, and keep delivery flowing.",
+      "outputs": ["roadmap", "task breakdown", "decision log"]
+    },
+    {
+      "id": 2,
+      "name": "Muse",
+      "role": "Designer",
+      "mission": "Turn problem statements into actionable UX/UI specs.",
+      "outputs": ["wireframes", "interaction notes", "ui spec"]
+    },
+    {
+      "id": 3,
+      "name": "Atlas",
+      "role": "Backend Engineer",
+      "mission": "Design domain model, APIs, and service reliability baseline.",
+      "outputs": ["api contract", "backend implementation", "performance notes"]
+    },
+    {
+      "id": 4,
+      "name": "Nova",
+      "role": "Frontend Engineer",
+      "mission": "Build product UI and connect all user flows to APIs.",
+      "outputs": ["frontend implementation", "state management", "ui integration"]
+    },
+    {
+      "id": 5,
+      "name": "Echo",
+      "role": "QA",
+      "mission": "Protect quality with tests, bug isolation, and release checks.",
+      "outputs": ["test matrix", "regression result", "bug reports"]
+    },
+    {
+      "id": 6,
+      "name": "Forge",
+      "role": "Ops/SRE",
+      "mission": "Ship safely with deployment automation and monitoring.",
+      "outputs": ["deployment checklist", "monitoring setup", "release report"]
+    }
+  ]
+}
