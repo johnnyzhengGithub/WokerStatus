@@ -245,4 +245,10 @@ npm start
 
 > 每次改需求时，可以在这里勾选/补充条目，方便跟踪进度。
 
-"# WokerStatus" 
+"# WokerStatus"
+
+## 进一步设计（自治 AI 公司）
+
+如果你要把本项目升级为“6 个 AI 员工可自主找灵感、处理问题、产出产品”的自治公司模型，请参考：
+
+- `docs/AI_AUTONOMOUS_COMPANY_DESIGN.md`
