@@ -1,0 +1,13 @@
+{
+  "stages": ["IDEA", "DESIGN", "BUILD", "REVIEW", "RELEASE", "DONE"],
+  "state_rules": {
+    "WORKING": "task is actionable and deps are satisfied",
+    "WAITING": "task has unfinished dependencies",
+    "BLOCKED": "explicit blocker with reason",
+    "IDLE": "no open task"
+  },
+  "sla_minutes": {
+    "WAITING_WARNING": 30,
+    "WAITING_CRITICAL": 120
+  }
+}
