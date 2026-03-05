@@ -1,4 +1,4 @@
-const API_BASE = '';
+ï»¿const API_BASE = '';
 
 const STAGE_PROGRESS = {
   IDEA: 15,
@@ -10,12 +10,12 @@ const STAGE_PROGRESS = {
 };
 
 const STAGE_ICON = {
-  IDEA: '??',
-  DESIGN: '??',
-  BUILD: '?',
-  REVIEW: '??',
-  RELEASE: '??',
-  DONE: '?'
+  IDEA: '[I]',
+  DESIGN: '[D]',
+  BUILD: '[B]',
+  REVIEW: '[Q]',
+  RELEASE: '[R]',
+  DONE: '[OK]'
 };
 
 let dashboardState = {
@@ -87,20 +87,20 @@ function taskProgress(task, presenceState) {
 
 function progressBar(percent) {
   const blocks = Math.round((percent / 100) * 10);
-  const done = '¦'.repeat(blocks);
-  const todo = '¦'.repeat(Math.max(0, 10 - blocks));
+  const done = 'Â¦'.repeat(blocks);
+  const todo = 'Â¦'.repeat(Math.max(0, 10 - blocks));
   return `${done}${todo}`;
 }
 
 function priorityMeta(priority) {
   const value = Number(priority || 3);
-  if (value <= 1) return { icon: '??', label: 'High' };
-  if (value === 2) return { icon: '?', label: 'Medium' };
-  return { icon: '•', label: 'Low' };
+  if (value <= 1) return { icon: '[H]', label: 'High' };
+  if (value === 2) return { icon: '[M]', label: 'Medium' };
+  return { icon: 'â€¢', label: 'Low' };
 }
 
 function stageMeta(stage) {
-  return `${STAGE_ICON[stage] || '•'} ${stage || 'UNKNOWN'}`;
+  return `${STAGE_ICON[stage] || 'â€¢'} ${stage || 'UNKNOWN'}`;
 }
 
 function taskDurationStats() {
@@ -177,6 +177,136 @@ function getDependencyChain() {
   return best;
 }
 
+function buildDependencyEdges() {
+  const edgeMap = new Map();
+
+  dashboardState.presence.forEach(row => {
+    const p = row.presence;
+    if (p.state === 'WAITING' && p.waiting_for_user_id) {
+      const key = `${p.user_id}-${p.waiting_for_user_id}-waiting`;
+      edgeMap.set(key, {
+        from: Number(p.user_id),
+        to: Number(p.waiting_for_user_id),
+        type: 'waiting'
+      });
+    }
+  });
+
+  const taskById = new Map(
+    (dashboardState.tasks || []).map(task => [String(task.id), task])
+  );
+
+  dashboardState.tasks.forEach(task => {
+    const ownerId = Number(task.owner_user_id || task.owner_id);
+    const deps = Array.isArray(task.depends_on) ? task.depends_on : [];
+    deps.forEach(depId => {
+      const depTask = taskById.get(String(depId));
+      if (!depTask) return;
+      const depOwnerId = Number(depTask.owner_user_id || depTask.owner_id);
+      if (!depOwnerId || depOwnerId === ownerId) return;
+      const key = `${depOwnerId}-${ownerId}-task`;
+      edgeMap.set(key, { from: depOwnerId, to: ownerId, type: 'task' });
+    });
+  });
+
+  return Array.from(edgeMap.values()).filter(
+    edge => getUserById(edge.from) && getUserById(edge.to)
+  );
+}
+
+function layoutGraphNodes(width, height) {
+  const nodes = dashboardState.users || [];
+  const positions = new Map();
+  if (!nodes.length) return positions;
+
+  const cols = Math.min(3, Math.max(2, Math.ceil(Math.sqrt(nodes.length))));
+  const rows = Math.ceil(nodes.length / cols);
+  const xGap = cols > 1 ? (width - 140) / (cols - 1) : 0;
+  const yGap = rows > 1 ? (height - 120) / (rows - 1) : 0;
+
+  nodes.forEach((user, index) => {
+    const row = Math.floor(index / cols);
+    const col = index % cols;
+    positions.set(user.id, {
+      x: 70 + col * xGap,
+      y: 60 + row * yGap
+    });
+  });
+
+  return positions;
+}
+
+function renderDependencyGraph() {
+  const container = $('dependency-graph');
+  if (!container) return;
+
+  const users = dashboardState.users || [];
+  if (!users.length) {
+    container.innerHTML = '<div class="dep-empty">No users available.</div>';
+    return;
+  }
+
+  const width = Math.max(520, container.clientWidth || 520);
+  const rows = Math.ceil(users.length / 3);
+  const height = Math.max(170, rows * 110);
+  const positions = layoutGraphNodes(width, height);
+  const edges = buildDependencyEdges();
+
+  const edgeMarkup = edges
+    .map(edge => {
+      const from = positions.get(edge.from);
+      const to = positions.get(edge.to);
+      if (!from || !to) return '';
+      const mx = (from.x + to.x) / 2;
+      const my = (from.y + to.y) / 2 - 12;
+      return `<path class="dep-edge dep-edge--${edge.type}" d="M ${from.x} ${from.y} Q ${mx} ${my} ${to.x} ${to.y}" marker-end="url(#dep-arrow-${edge.type})"></path>`;
+    })
+    .join('');
+
+  const nodeMarkup = users
+    .map(user => {
+      const pos = positions.get(user.id);
+      const row = getPresenceByUserId(user.id);
+      const state = row ? row.presence.state : 'IDLE';
+      const initials = user.name
+        .split(' ')
+        .map(part => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+      const selected = dashboardState.selectedWorkerId === user.id;
+
+      return `
+        <g class="dep-node dep-node--${String(state || 'IDLE').toLowerCase()}${selected ? ' dep-node--selected' : ''}" data-user-id="${user.id}" transform="translate(${pos.x},${pos.y})">
+          <circle r="24"></circle>
+          <text class="dep-node__initials" text-anchor="middle" dy="5">${escapeHtml(initials)}</text>
+          <text class="dep-node__name" text-anchor="middle" y="40">${escapeHtml(user.name)}</text>
+        </g>
+      `;
+    })
+    .join('');
+
+  const hint = edges.length
+    ? ''
+    : '<text class="dep-hint" x="50%" y="92%" text-anchor="middle">No active dependencies right now.</text>';
+
+  container.innerHTML = `
+    <svg class="dep-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="dep-arrow-waiting" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#f59e0b"></polygon>
+        </marker>
+        <marker id="dep-arrow-task" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#60a5fa"></polygon>
+        </marker>
+      </defs>
+      ${edgeMarkup}
+      ${nodeMarkup}
+      ${hint}
+    </svg>
+  `;
+}
+
 function renderKPI() {
   const summary = dashboardState.summary;
   if (!summary) return;
@@ -218,13 +348,13 @@ function buildAlertRows() {
     const waitingFor = p.waiting_for_user_id ? getUserById(p.waiting_for_user_id) : null;
 
     if (p.state === 'WAITING' && minutesSince(p.since_time) >= 2) {
-      alerts.push(`? ${user.name} waiting > ${minutesSince(p.since_time)}m${waitingFor ? ` (for ${waitingFor.name})` : ''}`);
+      alerts.push(`[!] ${user.name} waiting > ${minutesSince(p.since_time)}m${waitingFor ? ` (for ${waitingFor.name})` : ''}`);
     }
     if (p.state === 'BLOCKED') {
-      alerts.push(`? ${user.name} blocked${p.reason ? `: ${p.reason}` : ''}`);
+      alerts.push(`[!] ${user.name} blocked${p.reason ? `: ${p.reason}` : ''}`);
     }
     if (p.state === 'IDLE' && minutesSince(p.since_time) >= 5) {
-      alerts.push(`? ${user.name} idle ${minutesSince(p.since_time)}m`);
+      alerts.push(`[!] ${user.name} idle ${minutesSince(p.since_time)}m`);
     }
   });
 
@@ -239,7 +369,7 @@ function renderAlerts() {
   if (!alerts.length) {
     const li = document.createElement('li');
     li.className = 'alerts__item alerts__item--ok';
-    li.textContent = '? No active alerts';
+    li.textContent = '[OK] No active alerts';
     list.appendChild(li);
   } else {
     alerts.forEach(text => {
@@ -256,7 +386,9 @@ function renderAlerts() {
     .map(user => user.name);
 
   $('dependency-chain').textContent =
-    chain.length > 1 ? `Dependency chain: ${chain.join(' ? ')}` : 'Dependency chain: clear';
+    chain.length > 1 ? `Dependency chain: ${chain.join(' -> ')}` : 'Dependency chain: clear';
+
+  renderDependencyGraph();
 }
 
 function workerCardDetail(user, p) {
@@ -371,8 +503,8 @@ function renderWorkerDetail() {
       <div class="task-detail__row"><span class="task-detail__label">Reason</span><span class="task-detail__value">${escapeHtml(p.reason || '-')}</span></div>
       <div class="task-detail__history">${
         recent.length
-          ? recent.map(ev => `<div>• ${escapeHtml(eventMessage(ev))}</div>`).join('')
-          : '• No recent history'
+          ? recent.map(ev => `<div>â€¢ ${escapeHtml(eventMessage(ev))}</div>`).join('')
+          : 'â€¢ No recent history'
       }</div>
     </div>
   `;
@@ -396,7 +528,7 @@ function renderQueue() {
     li.dataset.taskId = String(task.id);
     li.innerHTML = `
       <div class="queue-item__title">${priority.icon} ${escapeHtml(task.title)}</div>
-      <div class="queue-item__meta">${escapeHtml(stageMeta(task.stage))} · ${escapeHtml(owner ? owner.name : 'Unknown')} · ${priority.label}</div>
+      <div class="queue-item__meta">${escapeHtml(stageMeta(task.stage))} Â· ${escapeHtml(owner ? owner.name : 'Unknown')} Â· ${priority.label}</div>
     `;
 
     list.appendChild(li);
@@ -686,6 +818,29 @@ function attachStageActions() {
     $('role-action-user').value = String(userId);
     renderStage();
     renderWorkerDetail();
+    renderDependencyGraph();
+  });
+}
+
+function attachDependencyGraphActions() {
+  const graph = $('dependency-graph');
+  if (!graph) return;
+
+  graph.addEventListener('click', event => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const node = target.closest('.dep-node');
+    if (!node) return;
+
+    const userId = Number(node.getAttribute('data-user-id'));
+    if (!userId) return;
+
+    dashboardState.selectedWorkerId = userId;
+    $('form-user').value = String(userId);
+    $('role-action-user').value = String(userId);
+    renderStage();
+    renderWorkerDetail();
+    renderDependencyGraph();
   });
 }
 
@@ -719,8 +874,11 @@ async function init() {
   attachPresenceForm();
   attachTaskForm();
   attachStageActions();
+  attachDependencyGraphActions();
   attachRoleActions();
+  window.addEventListener('resize', renderDependencyGraph);
   startPolling();
 }
 
 window.addEventListener('DOMContentLoaded', init);
+
