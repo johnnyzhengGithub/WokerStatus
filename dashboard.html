@@ -23,26 +23,47 @@
   <main class="dashboard">
     <section class="dashboard__top">
       <div class="kpi-card">
-        <span class="kpi-card__label">Working</span>
+        <span class="kpi-card__label">?? Working</span>
         <span class="kpi-card__value" id="kpi-working">0</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-card__label">Waiting</span>
+        <span class="kpi-card__label">?? Waiting</span>
         <span class="kpi-card__value" id="kpi-waiting">0</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-card__label">Blocked</span>
+        <span class="kpi-card__label">?? Blocked</span>
         <span class="kpi-card__value" id="kpi-blocked">0</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-card__label">Idle</span>
+        <span class="kpi-card__label">? Idle</span>
         <span class="kpi-card__value" id="kpi-idle">0</span>
       </div>
-      <div class="kpi-card kpi-card--wide">
-        <span class="kpi-card__label">Longest waiting</span>
-        <span class="kpi-card__value" id="kpi-longest">-</span>
-        <span class="kpi-card__sub" id="kpi-longest-log">-</span>
+      <div class="kpi-card">
+        <span class="kpi-card__label">?? Throughput Today</span>
+        <span class="kpi-card__value" id="kpi-throughput">0</span>
       </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">? Avg Task Time</span>
+        <span class="kpi-card__value" id="kpi-avg-time">-</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">?? Queue Time</span>
+        <span class="kpi-card__value" id="kpi-queue-time">-</span>
+      </div>
+    </section>
+
+    <section class="warning-card" id="longest-warning">
+      <div class="warning-card__title">? Longest waiting</div>
+      <div class="warning-card__line" id="kpi-longest">No waiting users</div>
+      <div class="warning-card__line warning-card__line--muted" id="kpi-longest-log">-</div>
+    </section>
+
+    <section class="alerts">
+      <div class="alerts__header">
+        <h2 class="alerts__title">Alerts</h2>
+        <div class="alerts__chain" id="dependency-chain">Dependency chain: clear</div>
+      </div>
+      <ul class="alerts__list" id="alert-list"></ul>
     </section>
 
     <section class="dashboard__main">
@@ -51,6 +72,8 @@
       <aside class="queue">
         <h2 class="queue__title">Queue / Tasks</h2>
         <p class="queue__hint">PM-first autonomous workflow controls.</p>
+
+        <div class="task-detail" id="worker-detail"></div>
 
         <form id="role-action-form" class="update-form">
           <h3>Role actions</h3>
@@ -66,7 +89,6 @@
         </form>
 
         <ul class="queue__list" id="queue-list"></ul>
-
         <div class="task-detail" id="task-detail"></div>
 
         <form id="create-task-form" class="update-form">
