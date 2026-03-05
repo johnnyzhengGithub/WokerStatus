@@ -1,2 +1,3 @@
 __pycache__/
 company/runtime/state.json
+node_modules/

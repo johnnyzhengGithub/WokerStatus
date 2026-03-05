@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorkersStatus - Observe work. Remove waiting. Ship faster.</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="app app--landing">
+  <div class="glow-bg"></div>
+
+  <header class="nav">
+    <div class="nav__logo">
+      <span class="nav__logo-mark">WS</span>
+      <span class="nav__logo-text">WorkersStatus</span>
+    </div>
+    <nav class="nav__links">
+      <a href="#products" class="nav__link">Products</a>
+      <a href="#how-it-works" class="nav__link">How it works</a>
+      <a href="/dashboard.html" class="nav__link nav__link--primary">Open Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="landing">
+    <section class="hero">
+      <div class="hero__content">
+        <h1 class="hero__title">Observe work. Remove waiting. Ship faster.</h1>
+        <p class="hero__subtitle">
+          实时看到 6 人在做什么、在等谁、卡在哪里。
+        </p>
+        <div class="hero__actions">
+          <a href="/dashboard.html" class="btn btn--primary">Open Dashboard</a>
+          <a href="#create-task" class="btn btn--ghost">Create Task</a>
+        </div>
+        <p class="hero__meta">Live presence · Waiting graph · SLA heat · Audit trail</p>
+      </div>
+      <div class="hero__visual">
+        <div class="hero-card hero-card--primary">
+          <div class="hero-card__header">
+            <span class="pill pill--online">Live</span>
+            <span class="hero-card__caption">Team presence</span>
+          </div>
+          <div class="hero-card__grid">
+            <div class="mini-card mini-card--working">
+              <div class="mini-card__name">Atlas</div>
+              <div class="mini-card__status">WORKING</div>
+              <div class="mini-card__task">Shipping API v2</div>
+            </div>
+            <div class="mini-card mini-card--waiting">
+              <div class="mini-card__name">Muse</div>
+              <div class="mini-card__status">WAITING · 42m</div>
+              <div class="mini-card__task">Review from Orion</div>
+            </div>
+            <div class="mini-card mini-card--blocked">
+              <div class="mini-card__name">Echo</div>
+              <div class="mini-card__status">BLOCKED</div>
+              <div class="mini-card__task">Env outage</div>
+            </div>
+            <div class="mini-card mini-card--idle">
+              <div class="mini-card__name">Nova</div>
+              <div class="mini-card__status">IDLE</div>
+              <div class="mini-card__task">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="products">
+      <div class="section-heading">
+        <h2>Products / Modules</h2>
+        <p>把团队状态当作一个「产品面板」实时展示。</p>
+      </div>
+      <div class="card-grid">
+        <article class="product-card">
+          <div class="product-card__accent"></div>
+          <h3>Live Presence</h3>
+          <ul>
+            <li>每个人的当前状态：Working / Waiting / Blocked / Idle</li>
+            <li>任务标题、原因、等待对象一目了然</li>
+            <li>状态更新即刻通过 WebSocket 广播</li>
+          </ul>
+          <a href="/dashboard.html" class="product-card__link">See live wall →</a>
+        </article>
+
+        <article class="product-card">
+          <div class="product-card__accent"></div>
+          <h3>Pipeline Handoff</h3>
+          <ul>
+            <li>按交付链阶段组织任务与所有权</li>
+            <li>看清从构想到上线的每一次移交</li>
+            <li>发现「卡在中间」的责任空档</li>
+          </ul>
+          <button class="product-card__link" disabled>Coming soon</button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-card__accent"></div>
+          <h3>Waiting Graph</h3>
+          <ul>
+            <li>可视化「谁在等谁」的依赖关系</li>
+            <li>找到最长的等待链条与瓶颈节点</li>
+            <li>帮助 PM 主动打断无效等待</li>
+          </ul>
+          <button class="product-card__link" disabled>Coming soon</button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-card__accent"></div>
+          <h3>SLA Heat</h3>
+          <ul>
+            <li>WAITING 超过 30 分钟自动变黄</li>
+            <li>> 2 小时自动变红，优先处理</li>
+            <li>一眼看到哪张卡已经「烧起来」</li>
+          </ul>
+          <button class="product-card__link" disabled>Coming soon</button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-card__accent"></div>
+          <h3>Audit Trail</h3>
+          <ul>
+            <li>记录谁在什么时候改了什么状态</li>
+            <li>追踪「为什么今天特别慢」的根因</li>
+            <li>帮助回顾决策与响应的时机</li>
+          </ul>
+          <button class="product-card__link" disabled>Coming soon</button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-card__accent"></div>
+          <h3>Alerts</h3>
+          <ul>
+            <li>阻塞 / 超时自动推送到你常用的工具</li>
+            <li>减少「事后才知道」的翻车惊喜</li>
+            <li>支持团队自定义阈值与通知通道</li>
+          </ul>
+          <button class="product-card__link" disabled>Coming soon</button>
+        </article>
+      </div>
+    </section>
+
+    <section id="games" class="products">
+      <div class="section-heading">
+        <h2>Mini games shipped by the team</h2>
+        <p>Everything below is built by the 6 AI workers.</p>
+      </div>
+      <div class="card-grid" id="games-grid">
+        <!-- Released games rendered here -->
+      </div>
+    </section>
+
+    <section id="how-it-works" class="how">
+      <div class="section-heading">
+        <h2>How it works</h2>
+        <p>本地起一个小服务，2 分钟内看到团队状态墙。</p>
+      </div>
+      <ol class="how__steps">
+        <li>在本地启动 WorkersStatus 服务。</li>
+        <li>发一个 <code>POST /api/presence/update</code> 更新自己的状态。</li>
+        <li>打开 Dashboard，实时看到 6 人状态墙变化。</li>
+      </ol>
+    </section>
+
+    <section id="create-task" class="cta">
+      <div class="cta__content">
+        <h2>Start monitoring in 2 minutes.</h2>
+        <p>本地起一个端口即可试用，准备好再部署到云端。</p>
+        <div class="hero__actions">
+          <a href="/dashboard.html" class="btn btn--primary">Open Dashboard</a>
+          <a href="#how-it-works" class="btn btn--ghost">Developer guide</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="/landing.js"></script>
+</body>
+</html>
+

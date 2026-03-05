@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorkersStatus Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="app app--dashboard">
+  <div class="glow-bg"></div>
+
+  <header class="nav">
+    <div class="nav__logo">
+      <span class="nav__logo-mark">WS</span>
+      <span class="nav__logo-text">WorkersStatus</span>
+    </div>
+    <nav class="nav__links">
+      <a href="/index.html" class="nav__link">Landing</a>
+      <span class="nav__link nav__link--muted">Dashboard</span>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard__top">
+      <div class="kpi-card">
+        <span class="kpi-card__label">Working</span>
+        <span class="kpi-card__value" id="kpi-working">0</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">Waiting</span>
+        <span class="kpi-card__value" id="kpi-waiting">0</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">Blocked</span>
+        <span class="kpi-card__value" id="kpi-blocked">0</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-card__label">Idle</span>
+        <span class="kpi-card__value" id="kpi-idle">0</span>
+      </div>
+      <div class="kpi-card kpi-card--wide">
+        <span class="kpi-card__label">Longest waiting</span>
+        <span class="kpi-card__value" id="kpi-longest">—</span>
+        <span class="kpi-card__sub" id="kpi-longest-log">—</span>
+      </div>
+    </section>
+
+    <section class="dashboard__main">
+      <div class="stage" id="stage">
+        <!-- Stage with 6 agents rendered here -->
+      </div>
+
+      <aside class="queue">
+        <h2 class="queue__title">Queue / Tasks</h2>
+        <p class="queue__hint">Lightweight task lane for the team.</p>
+        <ul class="queue__list" id="queue-list">
+          <!-- Tasks rendered here -->
+        </ul>
+
+        <div class="task-detail" id="task-detail">
+          <!-- Selected task detail rendered here -->
+        </div>
+
+        <form id="create-task-form" class="update-form">
+          <h3>Create task</h3>
+          <label>
+            Work
+            <input type="text" id="task-title" placeholder="gomoku - board logic" />
+          </label>
+          <label>
+            Stage
+            <select id="task-stage">
+              <option value="IDEA">IDEA</option>
+              <option value="DESIGN">DESIGN</option>
+              <option value="BUILD">BUILD</option>
+              <option value="REVIEW">REVIEW</option>
+              <option value="RELEASE">RELEASE</option>
+              <option value="DONE">DONE</option>
+            </select>
+          </label>
+          <label>
+            Owner
+            <select id="task-owner"></select>
+          </label>
+          <button type="submit" class="btn btn--primary btn--full">Create task</button>
+        </form>
+
+        <form id="update-form" class="update-form">
+          <h3>Update status</h3>
+          <label>
+            User
+            <select id="form-user"></select>
+          </label>
+          <label>
+            State
+            <select id="form-state">
+              <option value="WORKING">WORKING</option>
+              <option value="WAITING">WAITING</option>
+              <option value="BLOCKED">BLOCKED</option>
+              <option value="IDLE">IDLE</option>
+            </select>
+          </label>
+          <label>
+            Work
+            <input type="text" id="form-task" placeholder="gomoku - engine" />
+          </label>
+          <label>
+            Waiting for (if WAITING)
+            <select id="form-waiting-for">
+              <option value="">—</option>
+            </select>
+          </label>
+          <label>
+            Reason
+            <input type="text" id="form-reason" placeholder="short reason" />
+          </label>
+          <button type="submit" class="btn btn--primary btn--full">Set presence</button>
+          <!-- Rules are enforced by backend; keep UI minimal -->
+        </form>
+
+        <div class="activity">
+          <h3 class="activity__title">Activity</h3>
+          <ul class="activity__list" id="activity-list">
+            <!-- Activity items rendered here -->
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="/dashboard.js"></script>
+</body>
+</html>
+
